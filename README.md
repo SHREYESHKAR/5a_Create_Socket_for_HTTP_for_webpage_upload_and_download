@@ -15,7 +15,52 @@ To write a PYTHON program for socket for HTTP for web page upload and download
 <BR>
 6.Stop the program
 <BR>
-## Program 
-## OUTPUT
-## Result
+## Program :
+```
+import socket
+
+def send_request(host, port, request):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect((host, port))
+        s.sendall(request.encode())
+        response = s.recv(4096).decode()
+    return response
+
+def upload_file(host, port, filename):
+    with open(filename, 'rb') as file:
+        file_data = file.read()
+        content_length = len(file_data)
+        request = f"POST /upload HTTP/1.1\r\nHost: {host}\r\nContent-Length: {content_length}\r\n\r\n"
+        request += file_data.decode()
+        response = send_request(host, port, request)
+    return response
+
+def download_file(host, port, filename):
+    request = f"GET /{filename} HTTP/1.1\r\nHost: {host}\r\n\r\n"
+    response = send_request(host, port, request)
+    # Assuming the response contains the file content after the headers
+    file_content = response.split('\r\n\r\n', 1)[1]
+    with open(filename, 'wb') as file:
+        file.write(file_content.encode())
+
+if __name__ == "__main__":
+    host = 'example.com'
+    port = 80
+
+    # Upload file
+    upload_response = upload_file(host, port, 'example.txt')
+    print("Upload response:", upload_response)
+
+    # Download file
+    download_file(host, port, 'example.txt')
+    print("File downloaded successfully.")
+
+```
+## OUTPUT :
+<img width="1501" height="1005" alt="ss 2 out 5" src="https://github.com/user-attachments/assets/41467407-f046-4bf0-9081-d03b95e9b30f" />
+
+<img width="1477" height="790" alt="ss 3 out 5" src="https://github.com/user-attachments/assets/08371cde-e389-48d8-ad8c-fc8e4d8462f6" />
+
+
+## RESULT:
 Thus the socket for HTTP for web page upload and download created and Executed
